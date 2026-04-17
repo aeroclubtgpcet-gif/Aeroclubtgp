@@ -9,14 +9,8 @@ export const Members = () => {
   const [selectedMember, setSelectedMember] = useState<any | null>(null);
 
   const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-yellow-500/50 text-yellow-400';
-      case 'member':
-        return 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-500/50 text-cyan-400';
-      default:
-        return 'bg-gradient-to-r from-gray-500/20 to-slate-500/20 border-gray-500/50 text-gray-400';
-    }
+    // All members get the same styling - no special highlighting
+    return 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-500/50 text-cyan-400';
   };
 
   if (loading) {

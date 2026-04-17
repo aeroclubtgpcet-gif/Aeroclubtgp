@@ -1,9 +1,11 @@
 import { motion } from 'motion/react';
-import { Calendar, Users, Tag, CheckCircle2, Clock, Lightbulb } from 'lucide-react';
-import { mockProjects } from '../data/mockData';
+import { Calendar, Users, Tag, CheckCircle2, Clock, Lightbulb, Loader2 } from 'lucide-react';
+import { useProjects } from '../../hooks/useSupabase';
 import { Badge } from '../components/ui/badge';
 
 export const Projects = () => {
+  const { projects, loading } = useProjects();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ongoing':
@@ -30,6 +32,14 @@ export const Projects = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-24 pb-12 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,69 +59,77 @@ export const Projects = () => {
         </motion.div>
 
         {/* Projects Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              className="relative group"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
-              
-              <div className="relative backdrop-blur-sm bg-[#0f172a]/60 border border-blue-500/30 rounded-xl overflow-hidden hover:border-cyan-400/50 transition-all duration-300 h-full flex flex-col">
-                {/* Project Image */}
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent" />
-                  
-                  {/* Status Badge */}
-                  <div className="absolute top-3 right-3">
-                    <Badge className={`flex items-center gap-1 ${getStatusColor(project.status)}`}>
-                      {getStatusIcon(project.status)}
-                      {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                    </Badge>
+        {projects.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-400 text-lg">No projects available at the moment. Check back soon!</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                className="relative group"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+                
+                <div className="relative backdrop-blur-sm bg-[#0f172a]/60 border border-blue-500/30 rounded-xl overflow-hidden hover:border-cyan-400/50 transition-all duration-300 h-full flex flex-col">
+                  {/* Project Image */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={project.image_url || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop'}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent" />
+                    
+                    {/* Status Badge */}
+                    <div className="absolute top-3 right-3">
+                      <Badge className={`flex items-center gap-1 ${getStatusColor(project.status)}`}>
+                        {getStatusIcon(project.status)}
+                        {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                      </Badge>
+                    </div>
+
+                    {/* Category Tag */}
+                    {project.category && (
+                      <div className="absolute top-3 left-3">
+                        <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/50 text-xs text-cyan-400 backdrop-blur-sm">
+                          <Tag className="h-3 w-3" />
+                          {project.category}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Category Tag */}
-                  <div className="absolute top-3 left-3">
-                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/50 text-xs text-cyan-400 backdrop-blur-sm">
-                      <Tag className="h-3 w-3" />
-                      {project.category}
+                  {/* Content */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4 flex-1">
+                      {project.description}
+                    </p>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-4 border-t border-blue-500/20">
+                      <div className="flex items-center text-sm text-gray-400">
+                        <Calendar className="h-4 w-4 mr-1.5 text-cyan-400" />
+                        {project.start_date ? new Date(project.start_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'TBD'}
+                      </div>
+                      <div className="flex items-center text-sm text-gray-400">
+                        <Users className="h-4 w-4 mr-1.5 text-cyan-400" />
+                        {project.team_members?.length || 0} Members
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Content */}
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4 flex-1">
-                    {project.description}
-                  </p>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between pt-4 border-t border-blue-500/20">
-                    <div className="flex items-center text-sm text-gray-400">
-                      <Calendar className="h-4 w-4 mr-1.5 text-cyan-400" />
-                      {new Date(project.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                    </div>
-                    <div className="flex items-center text-sm text-gray-400">
-                      <Users className="h-4 w-4 mr-1.5 text-cyan-400" />
-                      {project.members.length} Members
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         {/* CTA Section */}
         <motion.div

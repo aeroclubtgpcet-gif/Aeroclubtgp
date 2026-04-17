@@ -381,3 +381,55 @@ export async function deleteImage(bucket: 'profiles' | 'events' | 'projects', ur
     throw new Error(error.message || 'Failed to delete image');
   }
 }
+
+// =====================================================
+// STATS HOOK
+// =====================================================
+
+export function useStats() {
+  const [stats, setStats] = useState({
+    totalMembers: 0,
+    activeProjects: 0,
+    upcomingEvents: 0,
+    achievements: 23
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      // Get total members count
+      const { count: membersCount } = await supabase
+        .from('users')
+        .select('*', { count: 'exact', head: true });
+
+      // Get active projects count (ongoing status)
+      const { count: projectsCount } = await supabase
+        .from('projects')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'ongoing');
+
+      // Get upcoming events count
+      const { count: eventsCount } = await supabase
+        .from('events')
+        .select('*', { count: 'exact', head: true })
+        .gte('date', new Date().toISOString());
+
+      setStats({
+        totalMembers: membersCount || 0,
+        activeProjects: projectsCount || 0,
+        upcomingEvents: eventsCount || 0,
+        achievements: 23
+      });
+    } catch (error: any) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { stats, loading };
+}

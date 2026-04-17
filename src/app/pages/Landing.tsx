@@ -2,9 +2,11 @@ import { Link } from 'react-router';
 import { motion } from 'motion/react';
 import { ArrowRight, Plane, Users, Rocket, Trophy, Calendar } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { mockStats } from '../data/mockData';
+import { useStats } from '../../hooks/useSupabase';
 
 export const Landing = () => {
+  const { stats } = useStats();
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -118,10 +120,10 @@ export const Landing = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            <StatCard icon={Users} value={mockStats.totalMembers} label="Members" />
-            <StatCard icon={Rocket} value={mockStats.activeProjects} label="Active Projects" />
-            <StatCard icon={Calendar} value={mockStats.upcomingEvents} label="Upcoming Events" />
-            <StatCard icon={Trophy} value={mockStats.achievements} label="Achievements" />
+            <StatCard icon={Users} value={stats?.totalMembers || 0} label="Members" />
+            <StatCard icon={Rocket} value={stats?.activeProjects || 0} label="Active Projects" />
+            <StatCard icon={Calendar} value={stats?.upcomingEvents || 0} label="Upcoming Events" />
+            <StatCard icon={Trophy} value={stats?.achievements || 0} label="Achievements" />
           </motion.div>
         </div>
 

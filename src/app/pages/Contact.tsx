@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Mail, Phone, MapPin, Send, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Instagram } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
@@ -142,20 +142,20 @@ export const Contact = () => {
               <ContactInfoCard
                 icon={Mail}
                 title="Email Us"
-                content="contact@aeroclubtgp.com"
+                content="aeroclub.tgpcet@gmail.com"
                 description="We'll respond within 24 hours"
               />
               <ContactInfoCard
                 icon={Phone}
                 title="Call Us"
-                content="+1 (555) 123-4567"
+                content="9325849003 / 7249691765"
                 description="Mon-Fri, 9AM-6PM"
               />
               <ContactInfoCard
                 icon={MapPin}
                 title="Visit Us"
-                content="Engineering Building, Room 204"
-                description="TGP Campus, Innovation District"
+                content="Aeronautical Department"
+                description="Tulsiramji Gaikwad Patil College of Engineering and Technology Campus"
               />
             </div>
 
@@ -168,10 +168,11 @@ export const Contact = () => {
                 <p className="text-gray-400 mb-6">Follow us on social media for updates and behind-the-scenes content</p>
                 
                 <div className="flex gap-4">
-                  <SocialButton icon={Facebook} label="Facebook" />
-                  <SocialButton icon={Twitter} label="Twitter" />
-                  <SocialButton icon={Instagram} label="Instagram" />
-                  <SocialButton icon={Linkedin} label="LinkedIn" />
+                  <SocialButton 
+                    icon={Instagram} 
+                    label="Instagram" 
+                    href="https://www.instagram.com/aeroclub_tgp/" 
+                  />
                 </div>
               </div>
             </div>
@@ -226,9 +227,14 @@ const ContactInfoCard = ({ icon: Icon, title, content, description }: any) => (
   </div>
 );
 
-const SocialButton = ({ icon: Icon, label }: any) => (
-  <button className="p-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 hover:border-cyan-400/50 rounded-lg transition-all duration-300 group">
+const SocialButton = ({ icon: Icon, label, href }: any) => (
+  <a 
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="p-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 hover:border-cyan-400/50 rounded-lg transition-all duration-300 group inline-flex items-center justify-center"
+  >
     <Icon className="h-5 w-5 text-gray-400 group-hover:text-cyan-400 transition-colors" />
     <span className="sr-only">{label}</span>
-  </button>
+  </a>
 );
